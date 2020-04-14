@@ -6,14 +6,17 @@ import(
 	"fmt"
 )
 
-func GetAllMerchants(db *sql.DB) (schemas.Merchant){
-	query := `SELECT id, name, last_name FROM merchants;`
+func GetMerchantById(db *sql.DB, id int) (schemas.Merchant){
+	query := fmt.Sprintf(`SELECT * FROM merchants WHERE id = %d;`, id)
 
 	var merchant schemas.Merchant;
 
 	row := db.QueryRow(query)
 
-	switch err := row.Scan(&merchant.Id, &merchant.Name, &merchant.LastName); err {
+	switch err := row.Scan(&merchant.Id, &merchant.Name, 
+		&merchant.LastName, &merchant.SignupedAt, 
+		&merchant.Cpf, &merchant.PhoneNumber1, 
+		&merchant.PhoneNumber2, &merchant.Email); err {
 		case sql.ErrNoRows:
   			fmt.Println("No rows were returned!")
 		case nil:
@@ -23,4 +26,41 @@ func GetAllMerchants(db *sql.DB) (schemas.Merchant){
 	}
 
 	return merchant;
+}
+
+func GetAllMerchants(db *sql.DB) ([]schemas.Merchant){
+	query := fmt.Sprintf(`SELECT * FROM merchants`)
+	rows, err := db.Query(query)
+	
+	if err != nil {
+		panic(err)
+	}
+	var merchants []schemas.Merchant
+
+	for rows.Next() {
+		var merchant schemas.Merchant
+		err = rows.Scan(
+			&merchant.Id, &merchant.Name, 
+			&merchant.LastName, &merchant.SignupedAt, 
+			&merchant.Cpf, &merchant.PhoneNumber1, 
+			&merchant.PhoneNumber2, &merchant.Email)
+		merchants = append(merchants, merchant)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	return merchants;
+}
+
+func InsertMerchant(db *sql.DB, merchant schemas.Merchant) (sql.Result,error) {
+	query := fmt.Sprintf(`INSERT INTO merchants(id,name,last_name,signuped_at,cpf,
+		phone_number1,phone_number2,email) VALUES (%d,'%s','%s',now(),'%s','%s','%s','%s')`,
+		merchant.Id,merchant.Name,merchant.LastName,merchant.Cpf,
+		merchant.PhoneNumber1,merchant.PhoneNumber2,merchant.Email)
+
+	result,err := db.Exec(query)
+
+	return result, err
 }

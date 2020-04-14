@@ -7,6 +7,7 @@ import (
     // "github.com/golang-migrate/migrate/v4/database/postgres"
     // _ "github.com/golang-migrate/migrate/v4/source/file"
 	"fmt"
+	"../schemas"
 )
 
 
@@ -22,8 +23,19 @@ func main() {
 	
 	db, _ := Conection()
 
-	GetAllMerchants(db);
-	
+	// GetMerchantById(db, 1);
+
+	// values := GetAllMerchants(db);
+
+	// for i := 0; i<2; i++ {
+	// 	fmt.Println(values[i])
+	// }
+	value := schemas.Merchant{3,"Nayme","Simoes","","13213213290","1234-1234","98765-1234","nay_s@email.com"}
+	result,err := InsertMerchant(db, value)
+
+	fmt.Println(result)
+	fmt.Println(err)
+
 	CloseConection(db)
 }
  
