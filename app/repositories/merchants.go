@@ -6,7 +6,7 @@ import(
 	"fmt"
 )
 
-func GetMerchantById(db *sql.DB, id int) (schemas.Merchant){
+func GetMerchantById(id int) (schemas.Merchant){
 	query := fmt.Sprintf(`SELECT * FROM merchants WHERE id = %d;`, id)
 
 	var merchant schemas.Merchant;
@@ -28,7 +28,7 @@ func GetMerchantById(db *sql.DB, id int) (schemas.Merchant){
 	return merchant;
 }
 
-func GetAllMerchants(db *sql.DB) ([]schemas.Merchant){
+func GetAllMerchants() ([]schemas.Merchant){
 	query := fmt.Sprintf(`SELECT * FROM merchants`)
 	rows, err := db.Query(query)
 	
@@ -54,7 +54,7 @@ func GetAllMerchants(db *sql.DB) ([]schemas.Merchant){
 	return merchants;
 }
 
-func InsertMerchant(db *sql.DB, merchant schemas.Merchant) (sql.Result,error) {
+func InsertMerchant(merchant schemas.Merchant) (sql.Result,error) {
 	query := fmt.Sprintf(`INSERT INTO merchants(id,name,last_name,signuped_at,cpf,
 		phone_number1,phone_number2,email) VALUES (%d,'%s','%s',now(),'%s','%s','%s','%s')`,
 		merchant.Id,merchant.Name,merchant.LastName,merchant.Cpf,

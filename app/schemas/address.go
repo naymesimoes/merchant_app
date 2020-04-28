@@ -1,6 +1,7 @@
 package schemas
 
 type Address struct {
+	Id int
 	Address1 string
 	Address2 string
 	City string

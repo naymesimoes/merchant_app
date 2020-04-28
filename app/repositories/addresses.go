@@ -6,14 +6,14 @@ import (
 		"fmt"
 	)
 
-func GetAddresses(db *sql.DB, id int) schemas.Adress {
+func GetAddressById(id int) schemas.Address {
 	query := fmt.Sprintf(`SELECT * FROM address WHERE id = %d;`, id)
 
-	var adress schemas.Address
+	var address schemas.Address;
 
 	row := db.QueryRow(query)
 
-	switch err := row.Scan(&address.Adress1, &address.Adress2, &address.City, &address.State,
+	switch err := row.Scan(&address.Id, &address.Address1, &address.Address2, &address.City, &address.State,
 		&address.Country, &address.ZipCode, &address.MerchantId); err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
@@ -23,36 +23,36 @@ func GetAddresses(db *sql.DB, id int) schemas.Adress {
 		panic(err)
 	}
 
-	return adress
+	return address
 }
 
-func GetAllAddresses(db *sql.DB) []schemas.adress {
+func GetAllAddresses() []schemas.Address {
 	query := fmt.Sprintf(`SELECT * FROM address`)
 	rows, err := db.Query(query)
 
 	if err != nil {
 		panic(err)
 	}
-	var address []schemas.address
+	var addresses []schemas.Address
 
 	for rows.Next() {
-		var adress schemas.address
+		var address schemas.Address
 		err = rows.Scan(
-			&address.Adress1, &address.Adress2, &address.City, &address.State,
+			&address.Id, &address.Address1, &address.Address2, &address.City, &address.State,
 			&address.Country, &address.ZipCode, &address.MerchantId)
-		address = append(address, address)
+		addresses = append(addresses, address)
 	}
 
 	if err != nil {
 		panic(err)
 	}
 
-	return address
+	return addresses
 }
 
-func InsertAdress(db *sql.DB, adress schemas.adress) (sql.Result, error) {
-	query := fmt.Sprintf(`INSERT INTO address(address1, address2, city, state, country, ZipCode, MerchantId) VALUES ('%s','%s','%s','%s','%s','%s','%s')`,
-		address.Adress1, address.Adress2, address.City, address.State,
+func InsertAddress(address schemas.Address) (sql.Result, error) {
+	query := fmt.Sprintf(`INSERT INTO address(address1, address2, city, state, country, zip_code, merchant_id) VALUES ('%s','%s','%s','%s','%s','%s',%d)`,
+		address.Address1, address.Address2, address.City, address.State,
 		address.Country, address.ZipCode, address.MerchantId)
 
 	result, err := db.Exec(query)

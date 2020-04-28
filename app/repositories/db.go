@@ -19,9 +19,11 @@ const (
 	dbname   = "merchant_app"
   )
 
+var db *sql.DB
+
 func main() {
 	
-	db, _ := Conection()
+	db, _ = Conection()
 
 	// GetMerchantById(db, 1);
 
@@ -30,13 +32,17 @@ func main() {
 	// for i := 0; i<2; i++ {
 	// 	fmt.Println(values[i])
 	// }
-	value := schemas.Merchant{3,"Nayme","Simoes","","13213213290","1234-1234","98765-1234","nay_s@email.com"}
-	result,err := InsertMerchant(db, value)
+	// value := schemas.Merchant{3,"Nayme","Simoes","","13213213290","1234-1234","98765-1234","nay_s@email.com"}
+	// InsertMerchant(db, value)
+
+	value := schemas.BankAccount{0,"0123", "130038465", "cc", 100,3}
+
+	result,err := InsertBankAccount(value)
 
 	fmt.Println(result)
 	fmt.Println(err)
 
-	CloseConection(db)
+	CloseConection()
 }
  
 func Conection() (*sql.DB, error) {
@@ -52,6 +58,6 @@ func Conection() (*sql.DB, error) {
 	return db, err
 }
 
-func CloseConection(db *sql.DB) {
+func CloseConection() {
 	db.Close()
 }
