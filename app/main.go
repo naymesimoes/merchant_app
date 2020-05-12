@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"./repositories"
+	"./routes"
 )
 
-func main()
-{
-	
+func main() {
+	routes.HandleRequest()
 }

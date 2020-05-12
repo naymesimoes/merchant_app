@@ -9,4 +9,4 @@ type Address struct {
 	Country string
 	ZipCode string
 	MerchantId int
-}	
+}
