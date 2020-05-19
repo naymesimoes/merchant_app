@@ -1,15 +1,16 @@
-package main
+package repositories
 
 import (
-		"../schemas"
-		"database/sql"
-		"fmt"
-	)
+	"database/sql"
+	"fmt"
+
+	"../schemas"
+)
 
 func GetAddressById(id int) schemas.Address {
 	query := fmt.Sprintf(`SELECT * FROM address WHERE id = %d;`, id)
 
-	var address schemas.Address;
+	var address schemas.Address
 
 	row := db.QueryRow(query)
 

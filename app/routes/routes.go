@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
+
+	"../controllers"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -12,27 +13,26 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: homePage")
 }
 
-func homeHell(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to hell!")
-	fmt.Println("Endpoint Hit: homePage")
-}
+func getMerchantById(w http.ResponseWriter, r *http.Request) {
+	// k, _ := r.URL.Query()["name"]
+	// fmt.Fprintln(w, k)
 
-func getName(w http.ResponseWriter, r *http.Request) {
-	k, _ := r.URL.Query()["name"]
-	fmt.Fprintln(w, k)
-}
+	query := r.URL.Query()
 
-func getName2(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimPrefix(r.URL.Path, "/provisions/")
+	filters, present := query["merchant_id"]
 
-	fmt.Fprintln(w, id)
+	if !present || len(filters) == 0 {
+		fmt.Println("filters not present")
+	}
+
+	merchant := controllers.GetMerchantById(filters[0])
+
+	w.WriteHeader(200)
+	fmt.Fprintln(w, merchant)
 }
 
 func HandleRequest() {
 	http.HandleFunc("/", homePage)
-	http.HandleFunc("/hell", homeHell)
-	http.HandleFunc("/health-check", HealthCheck)
-	http.HandleFunc("/get-name-2/", getName2)
-	http.HandleFunc("/var/:name", getName)
+	http.HandleFunc("/merchants", getMerchantById)
 	log.Fatal(http.ListenAndServe(":10000", nil))
 }

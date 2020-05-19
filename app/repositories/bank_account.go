@@ -1,10 +1,11 @@
-package main
+package repositories
 
 import (
-		"../schemas"
-		"database/sql"
-		"fmt"
-	)
+	"database/sql"
+	"fmt"
+
+	"../schemas"
+)
 
 func GetBankAccountById(id int) schemas.BankAccount {
 	query := fmt.Sprintf(`SELECT * FROM bank_account WHERE id = %d;`, id)
@@ -14,8 +15,8 @@ func GetBankAccountById(id int) schemas.BankAccount {
 	row := db.QueryRow(query)
 
 	switch err := row.Scan(&bank_account.Id, &bank_account.BranchCode,
-						  &bank_account.AccountNumber, &bank_account.Type,
-						  &bank_account.BankCode, &bank_account.MerchantId); err {
+		&bank_account.AccountNumber, &bank_account.Type,
+		&bank_account.BankCode, &bank_account.MerchantId); err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
 	case nil:
@@ -53,9 +54,9 @@ func GetAllBankAccountes() []schemas.BankAccount {
 
 func InsertBankAccount(bank_account schemas.BankAccount) (sql.Result, error) {
 	query := fmt.Sprintf(`INSERT INTO bank_account(branch_code, account_number, type, bank_code, merchant_id) VALUES ('%s','%s','%s',%d,%d)`,
-	bank_account.BranchCode,
-	bank_account.AccountNumber, bank_account.Type,
-	bank_account.BankCode, bank_account.MerchantId)
+		bank_account.BranchCode,
+		bank_account.AccountNumber, bank_account.Type,
+		bank_account.BankCode, bank_account.MerchantId)
 
 	result, err := db.Exec(query)
 
