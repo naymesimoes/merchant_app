@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,15 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: homePage")
 }
 
+func handleMerchant(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		getMerchantById(w, r)
+	case "POST":
+		controllers.CreateMerchant(w, r)
+	}
+}
+
 func getMerchantById(w http.ResponseWriter, r *http.Request) {
 	// k, _ := r.URL.Query()["name"]
 	// fmt.Fprintln(w, k)
@@ -22,17 +32,26 @@ func getMerchantById(w http.ResponseWriter, r *http.Request) {
 	filters, present := query["merchant_id"]
 
 	if !present || len(filters) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
 		fmt.Println("filters not present")
+		return
 	}
 
 	merchant := controllers.GetMerchantById(filters[0])
 
-	w.WriteHeader(200)
-	fmt.Fprintln(w, merchant)
+	if merchant == nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintln(w, "Not Found")
+		return
+	}
+
+	responseBody, _ := json.Marshal(merchant)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseBody)
+	fmt.Fprintln(w, "OK")
 }
 
 func HandleRequest() {
 	http.HandleFunc("/", homePage)
-	http.HandleFunc("/merchants", getMerchantById)
-	log.Fatal(http.ListenAndServe(":10000", nil))
-}
+	http.HandleFunc("/merchants", handleMerchant)
